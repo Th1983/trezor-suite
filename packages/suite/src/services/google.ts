@@ -101,6 +101,8 @@ class Client {
 
         // which token is going to be updated depends on platform
         this.oauth2Client.on('tokens', tokens => {
+            console.log(' on tokens', tokens);
+
             if (tokens.refresh_token && isDesktop()) {
                 this.token = tokens.refresh_token;
             }
@@ -152,7 +154,11 @@ class Client {
 
         const url = this.oauth2Client.generateAuthUrl(options);
 
-        const { access_token, code } = await extractCredentialsFromAuthorizationFlow(url);
+        const response = await extractCredentialsFromAuthorizationFlow(url);
+
+        console.log('response', response);
+
+        const { access_token, code } = response;
         // implicit flow returns short lived access_token directly
         if (access_token) {
             this.token = access_token;
@@ -160,15 +166,29 @@ class Client {
             return;
         }
 
+        console.log('code', code);
+        const res = await fetch('http://localhost:3005/google-oauth', {
+            method: 'POST',
+            body: JSON.stringify({ code, foo: 'foo', codeVerifier: random, redirectUri }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        console.log(res);
+        const json = await res.json();
+        console.log(json);
+        this.oauth2Client.setCredentials({ ...json, expiry_date: 1755730809507 });
+
         // otherwise authorization code which is to be exchanged for tokens is retrieved
-        if (code) {
-            const { tokens } = await this.oauth2Client.getToken({
-                code,
-                redirect_uri: redirectUri,
-                codeVerifier: random,
-            });
-            this.oauth2Client.setCredentials(tokens);
-        }
+        // if (code) {
+        //     const { tokens } = await this.oauth2Client.getToken({
+        //         code,
+        //         redirect_uri: redirectUri,
+        //         codeVerifier: random,
+        //     });
+        //     console.log('tokens', tokens);
+        //     this.oauth2Client.setCredentials(tokens);
+        // }
     }
 
     /**
