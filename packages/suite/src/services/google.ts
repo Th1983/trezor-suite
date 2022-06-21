@@ -173,6 +173,9 @@ class Client {
             redirect_uri: redirectUri,
         };
 
+        // todo: check /status route. if response ok, we can use 'offline', if failed, fallback to 'online' short lived.
+        // this way we will have a working solution (although with degraded user experience) even if backend is not available.
+
         switch (process.env.SUITE_TYPE) {
             case 'desktop':
                 // authorization code flow with PKCE
