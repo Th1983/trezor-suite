@@ -124,6 +124,44 @@ class Client {
         }
     }
 
+    isTokenExpiring() {
+        const expiryDate = this.oauth2Client.credentials.expiry_date;
+        return expiryDate
+            ? expiryDate <= new Date().getTime() + this.oauth2Client.eagerRefreshThresholdMillis
+            : false;
+    }
+
+    setCredentials(json: any) {
+        if (json && json.expires_in) {
+            json.expiry_date = new Date().getTime() + json.expires_in * 1000;
+            delete json.expires_in;
+        }
+        this.oauth2Client.emit('tokens', json);
+        this.oauth2Client.setCredentials(json);
+    }
+
+    async getAccessToken() {
+        const shouldRefresh = !this.oauth2Client.credentials.access_token || this.isTokenExpiring();
+        if (shouldRefresh) {
+            const res = await fetch('http://localhost:3005/google-oauth-refresh', {
+                method: 'POST',
+                body: JSON.stringify({
+                    refreshToken: this.oauth2Client.credentials.refresh_token,
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const json = await res.json();
+            this.setCredentials(json);
+            if (!json.credentials || (json.credentials && !json.credentials.access_token)) {
+                throw new Error('Could not refresh access token.');
+            }
+            return json.credentials.access_token;
+        }
+        return this.oauth2Client.credentials.access_token;
+    }
+
     async authorize() {
         const redirectUri = await getOauthReceiverUrl();
         if (!redirectUri) return;
@@ -166,29 +204,16 @@ class Client {
             return;
         }
 
-        console.log('code', code);
-        const res = await fetch('http://localhost:3005/google-oauth', {
+        const res = await fetch('http://localhost:3005/google-oauth-init', {
             method: 'POST',
-            body: JSON.stringify({ code, foo: 'foo', codeVerifier: random, redirectUri }),
+            body: JSON.stringify({ code, codeVerifier: random, redirectUri }),
             headers: {
                 'Content-Type': 'application/json',
             },
         });
-        console.log(res);
         const json = await res.json();
-        console.log(json);
-        this.oauth2Client.setCredentials({ ...json, expiry_date: 1755730809507 });
-
-        // otherwise authorization code which is to be exchanged for tokens is retrieved
-        // if (code) {
-        //     const { tokens } = await this.oauth2Client.getToken({
-        //         code,
-        //         redirect_uri: redirectUri,
-        //         codeVerifier: random,
-        //     });
-        //     console.log('tokens', tokens);
-        //     this.oauth2Client.setCredentials(tokens);
-        // }
+        this.setCredentials(json);
+        this.oauth2Client.setCredentials(json);
     }
 
     /**
@@ -346,13 +371,13 @@ class Client {
             url += `?${query}`;
         }
 
-        const accessToken = await this.oauth2Client.getAccessToken();
+        const accessToken = await this.getAccessToken();
 
         const fetchOptions = {
             ...fetchParams,
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken?.token}`,
+                Authorization: `Bearer ${accessToken}`,
                 ...fetchParams.headers,
             },
         };
