@@ -2,7 +2,7 @@
 
 Authorization endpoints for saving labels in Google Drive via OAuth 2.0.
 
-Google requires `client_secret` to grant long term access with a `refresh_token`. This is a [recommended](https://developers.google.com/identity/protocols/oauth2/native-app) OAuth flow for desktop apps. Google authentication server is therefore accessed via our backend which stores the `client_secret`.
+Google requires `client_secret` to grant long term access with a `refresh_token`. This is a [recommended](https://developers.google.com/identity/protocols/oauth2/native-app) OAuth flow for desktop apps. Google authentication server is therefore accessed via our backend which stores the `client_secret`. Unlike our [Dropbox](https://developers.dropbox.com/oauth-guide) OAuth implementation, it is not possible to substitute the secret with PKCE.
 
 ## Development
 
@@ -13,4 +13,8 @@ Google requires `client_secret` to grant long term access with a `refresh_token`
 1. Install dependencies via `yarn workspace @trezor/auth-server install`.
 1. Run the server locally via `yarn workspace @trezor/auth-server dev`.
 1. Run desktop Suite.
-1. Edit labels in the app.
+1. Enable labeling in Suite and choose Google Drive for storage.
+
+## Build
+
+`yarn workspace @trezor/auth-server build:lib`

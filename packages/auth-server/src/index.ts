@@ -6,9 +6,6 @@ app.use(express.json());
 
 const port = 3005;
 
-// todo: maybe share with suite?
-const GOOGLE_CLIENT_ID_DESKTOP =
-    '721022212539-0o49kanusndsufaeh1nut13pp23hb1t8.apps.googleusercontent.com';
 const GOOGLE_CLIENT_SECRET =
     process.env.GOOGLE_CLIENT_SECRET || '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'; // TODO: remove temporary fallback
 
@@ -28,7 +25,7 @@ app.post('/google-oauth-init', async (req, res) => {
             body: JSON.stringify({
                 code: req.body.code,
                 client_secret: GOOGLE_CLIENT_SECRET,
-                client_id: GOOGLE_CLIENT_ID_DESKTOP,
+                client_id: req.body.clientId,
                 redirect_uri: req.body.redirectUri,
                 grant_type: 'authorization_code',
                 code_verifier: req.body.codeVerifier,
@@ -52,7 +49,7 @@ app.post('/google-oauth-refresh', async (req, res) => {
                 refresh_token: req.body.refreshToken,
                 grant_type: 'refresh_token',
                 client_secret: GOOGLE_CLIENT_SECRET,
-                client_id: GOOGLE_CLIENT_ID_DESKTOP,
+                client_id: req.body.clientId,
             }),
             method: 'POST',
         });

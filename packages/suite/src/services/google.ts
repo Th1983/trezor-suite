@@ -145,6 +145,7 @@ class Client {
             const res = await fetch(`${AUTH_SERVER_URL}/google-oauth-refresh`, {
                 method: 'POST',
                 body: JSON.stringify({
+                    clientId: METADATA.GOOGLE_CLIENT_ID_DESKTOP,
                     refreshToken: this.oauth2Client.credentials.refresh_token,
                 }),
                 headers: {
@@ -198,7 +199,12 @@ class Client {
 
         const res = await fetch(`${AUTH_SERVER_URL}/google-oauth-init`, {
             method: 'POST',
-            body: JSON.stringify({ code, codeVerifier: random, redirectUri }),
+            body: JSON.stringify({
+                clientId: METADATA.GOOGLE_CLIENT_ID_DESKTOP,
+                code,
+                codeVerifier: random,
+                redirectUri,
+            }),
             headers: {
                 'Content-Type': 'application/json',
             },
