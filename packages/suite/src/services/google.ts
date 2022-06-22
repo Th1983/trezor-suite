@@ -16,6 +16,7 @@ import { isWeb, isDesktop } from '@suite-utils/env';
 
 const SCOPES = 'https://www.googleapis.com/auth/drive.appdata';
 const BOUNDARY = '-------314159265358979323846';
+const AUTH_SERVER_URL = process.env.AUTH_SERVER_URL || 'http://localhost:3005'; // TODO: replace with server URL
 
 type QueryParams = {
     q?: string;
@@ -101,8 +102,6 @@ class Client {
 
         // which token is going to be updated depends on platform
         this.oauth2Client.on('tokens', tokens => {
-            console.log(' on tokens', tokens);
-
             if (tokens.refresh_token && isDesktop()) {
                 this.token = tokens.refresh_token;
             }
@@ -143,7 +142,7 @@ class Client {
     async getAccessToken() {
         const shouldRefresh = !this.oauth2Client.credentials.access_token || this.isTokenExpiring();
         if (shouldRefresh) {
-            const res = await fetch('http://localhost:3005/google-oauth-refresh', {
+            const res = await fetch(`${AUTH_SERVER_URL}/google-oauth-refresh`, {
                 method: 'POST',
                 body: JSON.stringify({
                     refreshToken: this.oauth2Client.credentials.refresh_token,
@@ -154,7 +153,7 @@ class Client {
             });
             const json = await res.json();
             this.setCredentials(json);
-            if (!json.credentials || (json.credentials && !json.credentials.access_token)) {
+            if (!json.credentials?.access_token) {
                 throw new Error('Could not refresh access token.');
             }
             return json.credentials.access_token;
@@ -173,31 +172,21 @@ class Client {
             redirect_uri: redirectUri,
         };
 
-        // todo: check /status route. if response ok, we can use 'offline', if failed, fallback to 'online' short lived.
-        // this way we will have a working solution (although with degraded user experience) even if backend is not available.
-
-        switch (process.env.SUITE_TYPE) {
-            case 'desktop':
-                // authorization code flow with PKCE
-                Object.assign(options, {
-                    access_type: 'offline',
-                    code_challenge: random,
-                    code_challenge_method: CodeChallengeMethod.Plain,
-                });
-                break;
-            case 'web':
-                // implicit flow
-                Object.assign(options, { access_type: 'online', response_type: 'token' });
-                break;
-            default:
-            // no default
+        if (isDesktop() && (await fetch('http://localhost:3005/status')).ok) {
+            // authorization code flow with PKCE
+            Object.assign(options, {
+                access_type: 'offline',
+                code_challenge: random,
+                code_challenge_method: CodeChallengeMethod.Plain,
+            });
+        } else {
+            // implicit flow
+            Object.assign(options, { access_type: 'online', response_type: 'token' });
         }
 
         const url = this.oauth2Client.generateAuthUrl(options);
 
         const response = await extractCredentialsFromAuthorizationFlow(url);
-
-        console.log('response', response);
 
         const { access_token, code } = response;
         // implicit flow returns short lived access_token directly
@@ -207,7 +196,7 @@ class Client {
             return;
         }
 
-        const res = await fetch('http://localhost:3005/google-oauth-init', {
+        const res = await fetch(`${AUTH_SERVER_URL}/google-oauth-init`, {
             method: 'POST',
             body: JSON.stringify({ code, codeVerifier: random, redirectUri }),
             headers: {
