@@ -33,8 +33,6 @@ describe('Add-account-types', () => {
         // Test preparation
         //
         const coin = 'btc';
-        // const accountTypes = ['normal', 'taproot', 'segwit', 'legacy'];
-        // const accAdds = ['', ' (Taproot)', ' (Legacy Segwit)', ' (Legacy)'];
         const AccsArray = [
             ['normal', 'Bitcoin'],
             ['taproot', 'Bitcoin (Taproot)'],
@@ -64,12 +62,10 @@ describe('Add-account-types', () => {
 
                         expect(numberOfAccounts2).to.be.equal(numberOfAccounts1 + 1);
                     });
-                    cy.wait(5000);
-                    // @account-menu/taproot
-                    //
-                    // Assert
-                    //
                 }),
         );
+        //
+        // Assert
+        //
     });
 });
