@@ -4,10 +4,17 @@ import fetch from 'node-fetch';
 const app = express();
 app.use(express.json());
 
-const port = 3005;
-
+const PORT = process.env.PORT || 3005;
 const GOOGLE_CLIENT_SECRET =
     process.env.GOOGLE_CLIENT_SECRET || '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'; // TODO: remove temporary fallback
+
+const checkResponse = (responseBody: object, expectedProperties: string[]) => {
+    expectedProperties.forEach(property => {
+        if (!Object.prototype.hasOwnProperty.call(responseBody, property)) {
+            throw new Error('Unexpected response from authentiacation server.');
+        }
+    });
+};
 
 /**
  * Is server alive?
@@ -33,6 +40,7 @@ app.post('/google-oauth-init', async (req, res) => {
             method: 'POST',
         });
         const json = await response.json();
+        checkResponse(json, ['refresh_token', 'access_token', 'expires_in']);
         res.status(response.status).send(json);
     } catch (error) {
         res.status(401).json(`Authorization failed: ${error}`);
@@ -54,12 +62,13 @@ app.post('/google-oauth-refresh', async (req, res) => {
             method: 'POST',
         });
         const json = await response.json();
+        checkResponse(json, ['access_token', 'expires_in']);
         res.status(response.status).send(json);
     } catch (error) {
         res.status(401).json(`Refresh failed: ${error}`);
     }
 });
 
-app.listen(port, () => {
-    console.log(`OAuth app listening on port ${port}`);
+app.listen(PORT, () => {
+    console.log(`OAuth app listening on port ${PORT}`);
 });
