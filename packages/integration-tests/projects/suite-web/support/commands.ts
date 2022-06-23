@@ -113,7 +113,7 @@ declare global {
             }) => Chainable<Subject>;
             skipOn: (nameOrFlag: string | boolean, cb?: () => void) => Cypress.Chainable<any>;
             onlyOn: (nameOrFlag: string | boolean, cb?: () => void) => Cypress.Chainable<any>;
-            createAccount: (coin: string, acctoAdd: string) => Chainable<Subject>;
+            createAccount: (coin: string, accountNameAdd: string) => Chainable<Subject>;
         }
     }
 }
