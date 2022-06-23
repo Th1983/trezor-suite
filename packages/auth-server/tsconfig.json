@@ -3,5 +3,10 @@
     "compilerOptions": {
         "outDir": "libDev"
     },
-    "references": []
+    "references": [],
+    "ts-node": {
+        "compilerOptions": {
+            "module": "CommonJS"
+        }
+    }
 }

@@ -5,15 +5,16 @@
     "license": "See LICENSE.md in repo root",
     "sideEffects": false,
     "main": "src/index",
-    "type": "module",
     "scripts": {
         "lint": "eslint '**/*.{ts,tsx,js}'",
         "test:unit": "jest --passWithNoTests",
         "type-check": "tsc --build",
-        "build:lib": "rimraf ./lib && tsc --build tsconfig.lib.json",
-        "dev": "node --loader ts-node/esm ./src/index.ts"
+        "dev": "npx nodemon --exec 'ts-node' ./src/index.ts",
+        "build": "rimraf ./lib && tsc --build tsconfig.lib.json",
+        "start": "node ./lib/index.js"
     },
     "dependencies": {
-        "express": "^4.18.1"
+        "express": "^4.18.1",
+        "node-fetch": "^2.6.7"
     }
 }
