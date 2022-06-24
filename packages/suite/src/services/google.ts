@@ -12,7 +12,6 @@ import { OAuth2Client, CodeChallengeMethod } from 'google-auth-library';
 import { METADATA } from '@suite-actions/constants';
 import { extractCredentialsFromAuthorizationFlow, getOauthReceiverUrl } from '@suite-utils/oauth';
 import { getCodeChallenge } from '@suite-utils/random';
-import { isWeb, isDesktop } from '@suite-utils/env';
 
 const SCOPES = 'https://www.googleapis.com/auth/drive.appdata';
 const BOUNDARY = '-------314159265358979323846';
@@ -97,28 +96,37 @@ class Client {
         this.token = token;
         this.nameIdMap = {};
         this.oauth2Client = new OAuth2Client({
-            clientId: isWeb() ? METADATA.GOOGLE_CLIENT_ID_WEB : METADATA.GOOGLE_CLIENT_ID_DESKTOP,
+            clientId: METADATA.GOOGLE_CLIENT_ID_DESKTOP,
+        });
+    }
+
+    async init() {
+        const isAuthServerAvailable = await this.isAuthServerAvailable();
+        this.oauth2Client = new OAuth2Client({
+            clientId: isAuthServerAvailable
+                ? METADATA.GOOGLE_CLIENT_ID_DESKTOP
+                : METADATA.GOOGLE_CLIENT_ID_WEB,
         });
 
         // which token is going to be updated depends on platform
         this.oauth2Client.on('tokens', tokens => {
-            if (tokens.refresh_token && isDesktop()) {
+            console.log('tokens', tokens);
+            if (tokens.refresh_token) {
                 this.token = tokens.refresh_token;
             }
-            if (tokens.access_token && isWeb()) {
+            if (tokens.access_token && !isAuthServerAvailable) {
                 this.token = tokens.access_token;
             }
         });
 
         // which token is going to be remembered depends on platform
-        if (token && isDesktop()) {
+        if (isAuthServerAvailable) {
             this.oauth2Client.setCredentials({
-                refresh_token: token,
+                refresh_token: this.token,
             });
-        }
-        if (token && isWeb()) {
+        } else {
             this.oauth2Client.setCredentials({
-                access_token: token,
+                access_token: this.token,
             });
         }
     }
@@ -162,7 +170,16 @@ class Client {
         return this.oauth2Client.credentials.access_token;
     }
 
+    async isAuthServerAvailable() {
+        try {
+            return (await fetch('http://localhost:3005/status')).ok;
+        } catch (err) {
+            return false;
+        }
+    }
+
     async authorize() {
+        await this.init();
         const redirectUri = await getOauthReceiverUrl();
         if (!redirectUri) return;
 
@@ -173,7 +190,7 @@ class Client {
             redirect_uri: redirectUri,
         };
 
-        if (isDesktop() && (await fetch('http://localhost:3005/status')).ok) {
+        if (await this.isAuthServerAvailable()) {
             // authorization code flow with PKCE
             Object.assign(options, {
                 access_type: 'offline',
@@ -185,9 +202,13 @@ class Client {
             Object.assign(options, { access_type: 'online', response_type: 'token' });
         }
 
-        const url = this.oauth2Client.generateAuthUrl(options);
+        console.log('options', options);
 
+        const url = this.oauth2Client.generateAuthUrl(options);
+        console.log('url', url);
         const response = await extractCredentialsFromAuthorizationFlow(url);
+
+        console.log('extractCredentialsFromAuthorizationFlow', response);
 
         const { access_token, code } = response;
         // implicit flow returns short lived access_token directly
@@ -209,6 +230,7 @@ class Client {
                 'Content-Type': 'application/json',
             },
         });
+
         const json = await res.json();
         this.setCredentials(json);
         this.oauth2Client.setCredentials(json);

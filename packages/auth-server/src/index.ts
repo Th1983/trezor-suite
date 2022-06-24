@@ -1,8 +1,11 @@
 import express from 'express';
 import fetch from 'node-fetch';
+import cors from 'cors';
 
 const app = express();
+
 app.use(express.json());
+app.use(cors());
 
 const PORT = process.env.PORT || 3005;
 const GOOGLE_CLIENT_SECRET =
@@ -39,6 +42,7 @@ app.post('/google-oauth-init', async (req, res) => {
             }),
             method: 'POST',
         });
+        console.log('response', response);
         const json = await response.json();
         checkResponse(json, ['refresh_token', 'access_token', 'expires_in']);
         res.status(response.status).send(json);
@@ -61,6 +65,8 @@ app.post('/google-oauth-refresh', async (req, res) => {
             }),
             method: 'POST',
         });
+        console.log('response refresh', response);
+
         const json = await response.json();
         checkResponse(json, ['access_token', 'expires_in']);
         res.status(response.status).send(json);
