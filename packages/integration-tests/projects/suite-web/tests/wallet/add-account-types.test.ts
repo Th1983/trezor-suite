@@ -5,7 +5,7 @@ describe('Add-account-types', () => {
     beforeEach(() => {
         cy.task('startEmu', { wipe: true });
         cy.task('setupEmu', {
-            mnemonic: 'town grace cat forest dress dust trick practise hair survey pupil regular',
+            mnemonic: 'town grace cat forest dress dust trick practice hair survey pupil regular',
         });
         cy.task('startBridge');
 
