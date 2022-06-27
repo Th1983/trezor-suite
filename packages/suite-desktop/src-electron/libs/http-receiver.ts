@@ -1,6 +1,8 @@
 import * as http from 'http';
 import * as net from 'net';
 import * as url from 'url';
+import { URL } from 'url';
+
 import { EventEmitter } from 'events';
 import { HTTP_ORIGINS_DEFAULT } from './constants';
 
@@ -138,6 +140,7 @@ export class HttpReceiver extends EventEmitter {
      * Entry point for handling requests
      */
     private onRequest = (request: http.IncomingMessage, response: http.ServerResponse) => {
+        console.log('request.url', request.url);
         // mostly ts stuff. request should always have url defined.
         if (!request.url) {
             this.logger.warn('http-receiver', 'Unexpected incoming message (no url)');
@@ -178,6 +181,8 @@ export class HttpReceiver extends EventEmitter {
     };
 
     private isOriginAllowed = (origins: string[], referer?: string) => {
+        // todo
+        return true;
         // Allow all origins
         if (origins.includes('*')) {
             return true;
@@ -212,6 +217,12 @@ export class HttpReceiver extends EventEmitter {
                 </head>
                 <body>
                     ${content}
+                    <script>
+                        console.log(window.location.search);
+                        if (window.location.href.includes('#')) {
+                            fetch(window.location.href.replace('#', '?'))
+                        }
+                    </script>
                 </body>
             </html>
         `;
@@ -225,6 +236,9 @@ export class HttpReceiver extends EventEmitter {
 
     private oauthHandler = (request: Request, response: http.ServerResponse) => {
         const { search } = url.parse(request.url, true);
+        console.log(request);
+        console.log('requets.url', request.url);
+        console.log('search', search);
         if (search) {
             // send data back to main window
             this.emit('oauth/response', { search });

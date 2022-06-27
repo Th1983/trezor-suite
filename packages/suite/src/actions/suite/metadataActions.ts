@@ -249,6 +249,8 @@ export const fetchMetadata =
 
         // this triggers renewal of access token if needed. Otherwise multiple requests
         // to renew access token are issued by every provider.getFileContent
+        console.log('metadatActions fetchMetadata');
+
         const response = await provider.getProviderDetails();
         if (!response.success) return;
 
@@ -408,19 +410,27 @@ const syncMetadataKeys = () => (dispatch: Dispatch, getState: GetState) => {
 };
 
 export const connectProvider = (type: MetadataProviderType) => async (dispatch: Dispatch) => {
+    console.log('metadatActions connectProvider');
+
     let provider = dispatch(getProvider());
 
     if (!provider) {
         provider = createProvider(type);
     }
+
+    console.log('provider', provider);
     const isConnected = await provider.isConnected();
-    if (provider && !isConnected) {
+    console.log('isConnected', isConnected);
+
+    if (!isConnected) {
         const connectionResult = await provider.connect();
         if ('error' in connectionResult) {
             return connectionResult.error;
         }
     }
+
     const result = await provider.getProviderDetails();
+
     if (!result.success) {
         dispatch(handleProviderError(result, ProviderErrorAction.CONNECT));
         return;
