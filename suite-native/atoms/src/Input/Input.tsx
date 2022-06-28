@@ -1,5 +1,6 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { TextInput, Pressable } from 'react-native';
+import { D } from '@mobily/ts-belt';
 import Animated, {
     Easing,
     interpolate,
@@ -78,18 +79,14 @@ const inputStyle = prepareNativeStyle(utils => ({
 
 const inputLabelStyle = prepareNativeStyle(
     (utils, { isLabelMinimized }: Pick<InputWrapperStyleProps, 'isLabelMinimized'>) => ({
-        lineHeight: utils.typography.body.lineHeight,
-        letterSpacing: utils.typography.body.letterSpacing,
-        fontWeight: utils.typography.body.fontWeight,
+        ...D.deleteKey(utils.typography.body, 'fontSize'),
         color: utils.colors.gray600,
         position: 'absolute',
         left: INPUT_WRAPPER_PADDING_HORIZONTAL,
         extend: {
             condition: isLabelMinimized,
             style: {
-                lineHeight: utils.typography.label.lineHeight,
-                letterSpacing: utils.typography.label.letterSpacing,
-                fontWeight: utils.typography.label.fontWeight,
+                ...D.deleteKey(utils.typography.label, 'fontSize'),
             },
         },
     }),
