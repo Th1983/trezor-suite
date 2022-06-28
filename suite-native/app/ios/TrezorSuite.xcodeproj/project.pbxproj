@@ -15,13 +15,13 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		295C649096E84360A861704B /* TTSatoshi-DemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7A6230C034DE4586AD564C7F /* TTSatoshi-DemiBold.otf */; };
 		5C232FC7C0094224A35E1882 /* TTSatoshi-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = E70CFF92AAAE4DEF96F4931E /* TTSatoshi-Regular.otf */; };
-		5EA58567F7C34D4BB4135E94 /* TTSatoshi-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = A0E40F5120CB4E82AF6C1CA0 /* TTSatoshi-Medium.otf */; };
+		5EA58567F7C34D4BB4135E94 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
 		7699B88040F8A987B510C191 /* libPods-TrezorSuite-TrezorSuiteTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-TrezorSuite-TrezorSuiteTests.a */; };
 		7F5F35C7F5874548A3B53457 /* TTSatoshi-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 97E677142EC34389AB5C8B52 /* TTSatoshi-Bold.otf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		AE19C8EA249F4BC29A82736A /* TTSatoshi-DemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDC7530653430F8480AEF1 /* TTSatoshi-DemiBold.otf */; };
-		B4528AB09CC346C49EB6347E /* TTSatoshi-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 69A6D83EFA4747F2BABDFD0A /* TTSatoshi-Regular.otf */; };
-		E603FAB37886431ABE0590DC /* TTSatoshi-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 92AC1F3110C34E2F8264BEAE /* TTSatoshi-Bold.otf */; };
+		AE19C8EA249F4BC29A82736A /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		B4528AB09CC346C49EB6347E /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		E603FAB37886431ABE0590DC /* BuildFile in Resources */ = {isa = PBXBuildFile; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,10 +121,6 @@
 		80736439959D441D9BCFB197 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				92AC1F3110C34E2F8264BEAE /* TTSatoshi-Bold.otf */,
-				8BCDC7530653430F8480AEF1 /* TTSatoshi-DemiBold.otf */,
-				A0E40F5120CB4E82AF6C1CA0 /* TTSatoshi-Medium.otf */,
-				69A6D83EFA4747F2BABDFD0A /* TTSatoshi-Regular.otf */,
 				97E677142EC34389AB5C8B52 /* TTSatoshi-Bold.otf */,
 				7A6230C034DE4586AD564C7F /* TTSatoshi-DemiBold.otf */,
 				EAD24AA6025640BB9F7C7B6B /* TTSatoshi-Medium.otf */,
@@ -272,10 +268,10 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				E603FAB37886431ABE0590DC /* TTSatoshi-Bold.otf in Resources */,
-				AE19C8EA249F4BC29A82736A /* TTSatoshi-DemiBold.otf in Resources */,
-				5EA58567F7C34D4BB4135E94 /* TTSatoshi-Medium.otf in Resources */,
-				B4528AB09CC346C49EB6347E /* TTSatoshi-Regular.otf in Resources */,
+				E603FAB37886431ABE0590DC /* BuildFile in Resources */,
+				AE19C8EA249F4BC29A82736A /* BuildFile in Resources */,
+				5EA58567F7C34D4BB4135E94 /* BuildFile in Resources */,
+				B4528AB09CC346C49EB6347E /* BuildFile in Resources */,
 				7F5F35C7F5874548A3B53457 /* TTSatoshi-Bold.otf in Resources */,
 				295C649096E84360A861704B /* TTSatoshi-DemiBold.otf in Resources */,
 				0EE2ADD303944494A5030793 /* TTSatoshi-Medium.otf in Resources */,

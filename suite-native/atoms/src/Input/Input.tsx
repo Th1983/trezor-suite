@@ -78,14 +78,18 @@ const inputStyle = prepareNativeStyle(utils => ({
 
 const inputLabelStyle = prepareNativeStyle(
     (utils, { isLabelMinimized }: Pick<InputWrapperStyleProps, 'isLabelMinimized'>) => ({
-        ...utils.typography.body,
+        lineHeight: utils.typography.body.lineHeight,
+        letterSpacing: utils.typography.body.letterSpacing,
+        fontWeight: utils.typography.body.fontWeight,
         color: utils.colors.gray600,
         position: 'absolute',
         left: INPUT_WRAPPER_PADDING_HORIZONTAL,
         extend: {
             condition: isLabelMinimized,
             style: {
-                ...utils.typography.label,
+                lineHeight: utils.typography.label.lineHeight,
+                letterSpacing: utils.typography.label.letterSpacing,
+                fontWeight: utils.typography.label.fontWeight,
             },
         },
     }),
