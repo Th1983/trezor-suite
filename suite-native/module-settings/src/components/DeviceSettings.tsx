@@ -6,11 +6,7 @@ import { SettingsSection } from './SettingsSection';
 import { SettingsSectionItem } from './SettingsSectionItem';
 
 export const DeviceSettings = () => {
-    const navigation = useNavigation<SettingsScreenProp>();
-
-    const handleNavigate = (route: SettingsStackRoutes): void => {
-        navigation.navigate(route);
-    };
+    const { navigate } = useNavigation<SettingsScreenProp>();
 
     return (
         <SettingsSection title="Device">
@@ -18,19 +14,19 @@ export const DeviceSettings = () => {
                 title="Customization"
                 iconName="palette"
                 subtitle="Name, Homescreen"
-                onPress={() => handleNavigate(SettingsStackRoutes.SettingsCustomization)}
+                onPress={() => navigate(SettingsStackRoutes.SettingsCustomization)}
             />
             <SettingsSectionItem
                 title="Security"
                 iconName="lock"
                 subtitle="PIN Active, Passphrase enabled"
-                onPress={() => handleNavigate(SettingsStackRoutes.SettingsSecurity)}
+                onPress={() => navigate(SettingsStackRoutes.SettingsSecurity)}
             />
             <SettingsSectionItem
                 title="Danger Area"
                 iconName="lock"
                 subtitle="Factory reset, Custom firmware"
-                onPress={() => handleNavigate(SettingsStackRoutes.SettingsDangerArea)}
+                onPress={() => navigate(SettingsStackRoutes.SettingsDangerArea)}
             />
         </SettingsSection>
     );
